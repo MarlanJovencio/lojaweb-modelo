@@ -4,15 +4,29 @@ require_once "includes/cabecalho.inc.php";
 
 if (!isset($_SESSION['clienteLogado']) || $_SESSION['clienteLogado'] == null) {
       header("Location: formLogin.php");
-} else if (!isset($_SESSION['carrinho']) || $_SESSION['carrinho'] == null || count($_SESSION['carrinho']) <= 0) {
-      header("Location: ./../controllers/produto-controller.inc.php?pOpcao=7");
-} else if (!isset($_SESSION['carrinhoTotal']) || $_SESSION['carrinhoTotal'] == null) {
-      header("Location: ./../controllers/carrinho-controller.php?pOpcao=4");
 }
 $clienteLogado = $_SESSION['clienteLogado'];
-$carrinho = $_SESSION['carrinho'];
-$carrinhoTotal = $_SESSION['carrinhoTotal'];
+$carrinho = [];
+if (isset($_SESSION['carrinho']) && $_SESSION['carrinho'] != null && count($_SESSION['carrinho']) > 0) {
+      $carrinho = $_SESSION['carrinho'];
+}
+$carrinhoTotal = 0;
+if (isset($_SESSION['carrinhoTotal']) && $_SESSION['carrinhoTotal'] != null) {
+      $carrinhoTotal = $_SESSION['carrinhoTotal'];
+}
 
+?>
+
+<?php
+if (isset($_SESSION['itensSemEstoque']) && $_SESSION['itensSemEstoque'] != null && count($_SESSION['itensSemEstoque']) > 0) {
+      foreach ($_SESSION['itensSemEstoque'] as $itemSemEstoque) {
+            ?>
+            <div class="alert alert-danger" role="alert">
+                  O produto <b><?= $itemSemEstoque->getProdutoNome() ?></b> não está disponivel no estoque, existem apenas
+                  <b><?= $itemSemEstoque->getProdutoEstoque() ?></b> unidade(s) disponivel(is) em estoque
+            </div>
+      <?php }
+}
 ?>
 
 <h1 class="text-center">Dados do cliente</h1>
@@ -85,14 +99,20 @@ $carrinhoTotal = $_SESSION['carrinhoTotal'];
                         </td>
                   </tr>
       </table>
-      <div class="container text-center">
-            <div class="row">
-                  <div class="col">
-                        <a class="btn btn-success" role="button" href="./../controllers/venda-controller.php?pOpcao=1"><b>Efetuar o pagamento</b></a>
+      <?php
+      if (count($carrinho) > 0) {
+            ?>
+            <div class="container text-center">
+                  <div class="row">
+                        <div class="col">
+                              <a class="btn btn-success" role="button"
+                                    href="./../controllers/venda-controller.php?pOpcao=1"><b>Efetuar o pagamento</b></a>
+                        </div>
                   </div>
             </div>
-      </div>
-
+            <?php
+      }
+      ?>
       <!-- Rodape -->
 
       <?php require_once "includes/rodape.inc.php" ?>

@@ -65,15 +65,19 @@ class CarrinhoController {
 
         $total = 0;
         $itens = [];
+        $itensSemEstoque = [];
         foreach ($_SESSION['carrinho'] as $item) {
             $item->updateProduto($this->dao->findById($item->getProdutoId()));
             if ($item->temEstoque()) {
                 $itens[] = $item;
                 $total = $total + $item->getSubtotal();
+            } else {
+                $itensSemEstoque[] = $item;
             }
         }
         $_SESSION['carrinho'] = $itens;
         $_SESSION['carrinhoTotal'] = $total;
+        $_SESSION['itensSemEstoque'] = $itensSemEstoque;
 
         header('Location:./../views/dadosCompra.php');
     }

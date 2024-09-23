@@ -40,10 +40,19 @@ class VendaDAO {
             $stmt->bindValue(":id_venda", $venda->getId());
             $stmt->execute();
             $idItem = $this->con->lastInsertId();
+            $this->reduzEstoque($item->getProdutoId(), $item->getQuantidade());
             if ($idItem != false) {
                 $item->setId((int) $idItem);
             }
         }
+    }
+    private function reduzEstoque(int $idProduto, int $quantidade) {
+        $stmt = $this->con->prepare(
+            "UPDATE produtos set estoque = estoque-? WHERE produto_id = ?"
+        );
+        $stmt->bindValue(1, $quantidade);
+        $stmt->bindValue(2, $idProduto);
+        $stmt->execute();
     }
 
 }

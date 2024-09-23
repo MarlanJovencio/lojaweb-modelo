@@ -36,12 +36,16 @@ class ItemCarrinho {
     }
 
     function getProdutoId(): int {
-        if(isset($this->produto) && $this->produto!==null) return $this->produto->getId();
+        if (isset($this->produto) && $this->produto !== null)
+            return $this->produto->getId();
 
         return $this->id_produto;
     }
     function getProdutoNome(): string {
         return $this->produto->getNome();
+    }
+    function getProdutoEstoque(): int {
+        return $this->produto->getEstoque();
     }
     function getProdutoFabricanteNome(): string {
         return $this->produto->getNomeFabricante();
@@ -65,6 +69,6 @@ class ItemCarrinho {
         $this->produto = $prod;
     }
     function temEstoque(): bool {
-        return $this->produto->getEstoque() >= $this->getQuantidade();
+        return ($this->produto->getEstoque() - 5) >= $this->getQuantidade();
     }
 }
