@@ -1,14 +1,18 @@
 <?php
 
 require_once './../dao/produto-dao.inc.php';
+require_once './../dao/cupom-dao.inc.php';
 require_once './../classes/produto.inc.php';
+require_once './../classes/cupom.inc.php';
 require_once './../classes/item-carrinho.inc.php';
 
 class CarrinhoController {
     private $dao;
+    private $cupomDao;
 
     function __construct() {
         $this->dao = new ProdutoDAO();
+        $this->cupomDao = new CupomDAO();
     }
 
     function adicionarItem() {
@@ -75,11 +79,35 @@ class CarrinhoController {
                 $itensSemEstoque[] = $item;
             }
         }
+        if (isset($_SESSION['cupom']) && $_SESSION['cupom'] != null) {
+            $_SESSION['carrinhoDesconto'] = ($_SESSION['cupom']->getPorcentagem() / 100) * $total;
+            $total = $total - $_SESSION['carrinhoDesconto'];
+        }
         $_SESSION['carrinho'] = $itens;
         $_SESSION['carrinhoTotal'] = $total;
         $_SESSION['itensSemEstoque'] = $itensSemEstoque;
 
         header('Location:./../views/dadosCompra.php');
+    }
+    function adicionarCumpom(): void {
+        session_start();
+        if (!isset($_SESSION['carrinho'])) {
+            $_SESSION['carrinho'] = array();
+            header('Location:./../views/index.php');
+            return;
+        }
+        $cupom = $this->cupomDao->findByCodigo($_REQUEST['pCupom']);
+        if ($cupom == null || $cupom->getDataValidadeAsTime() < time()) {
+            header('Location: ./../views/exibirCarrinho.php?mensagem=Cupom inválido!');
+            return;
+        }
+        $_SESSION['cupom'] = $cupom;
+        header('Location: ./../views/exibirCarrinho.php');
+    }
+    function removerCumpom(): void {
+        session_start();
+        unset($_SESSION['cupom']);
+        header('Location:./../views/exibirCarrinho.php');
     }
 }
 
@@ -94,6 +122,10 @@ if (isset($_REQUEST['pOpcao'])) {
         $controller->removerItem();
     } else if ($pOpcao == 4) {
         $controller->finalizarCompra();
+    } else if ($pOpcao == 5) {
+        $controller->adicionarCumpom();
+    } else if ($pOpcao == 6) {
+        $controller->removerCumpom();
     }
 
 }

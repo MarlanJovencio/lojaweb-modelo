@@ -88,9 +88,34 @@ if (isset($_SESSION['itensSemEstoque']) && $_SESSION['itensSemEstoque'] != null 
                   <?php } ?>
                   <!-- percurso termina aqui -->
 
+                  <?php
+                  if (isset($_SESSION['carrinhoDesconto'])) {
+                        ?>
+                        <tr align="right">
+                              <td colspan="7">
+                                    <font face="Verdana" size="3" color="red"><b>Valor Total = R$
+                                                <?php echo number_format($carrinhoTotal + $_SESSION['carrinhoDesconto'],
+                                                      2,
+                                                      ",",
+                                                      "."
+                                                ); ?></b></font>
+                              </td>
+                        </tr>
+                        <tr align="right">
+                              <td colspan="7">
+                                    <font face="Verdana" size="3" color="red"><b>Valor desconto = R$
+                                                <?php echo number_format($_SESSION['carrinhoDesconto'],
+                                                      2,
+                                                      ",",
+                                                      "."
+                                                ); ?></b></font>
+                              </td>
+                        </tr>
+                        <?php
+                  } ?>
                   <tr align="right">
                         <td colspan="7">
-                              <font face="Verdana" size="4" color="red"><b>Valor Total = R$
+                              <font face="Verdana" size="4" color="red"><b>Valor final = R$
                                           <?php echo number_format($carrinhoTotal,
                                                 2,
                                                 ",",
