@@ -79,8 +79,8 @@ class CarrinhoController {
                 $itensSemEstoque[] = $item;
             }
         }
-        if (isset($_SESSION['cupom']) && $_SESSION['cupom'] != null) {
-            $_SESSION['carrinhoDesconto'] = ($_SESSION['cupom']->getPorcentagem() / 100) * $total;
+        if (isset($_SESSION['cupom']) && $_SESSION['cupom'] != null || $_SESSION['clienteLogado']['perfil'] == 1) {
+            $_SESSION['carrinhoDesconto'] = (($_SESSION['cupom']->getPorcentagem() / 100) + ($_SESSION['clienteLogado']['perfil'] == 1 ? 0.3 : 0)) * $total;
             $total = $total - $_SESSION['carrinhoDesconto'];
         }
         $_SESSION['carrinho'] = $itens;

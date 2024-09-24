@@ -1,0 +1,1 @@
+ALTER TABLE `clientes` ADD `perfil` INT NOT NULL DEFAULT '0';
